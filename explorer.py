@@ -81,11 +81,11 @@ class Model(object):
     def autocomplete(self, query, limit):
         words = []
         i = 0
-        for word in self.model.vocab:
+        for word in self.model.wv.vocab:
             if word.startswith(query):
                 words.append({
                     'word': word,
-                    'count': self.model.vocab[word].count})
+                    'count': self.model.wv.vocab[word].count})
                 i += 1
 
         words = sorted(words, key=lambda x: x['count'], reverse=True)
@@ -126,7 +126,7 @@ class Model(object):
         else:
             exploration.labels, exploration.vectors, sample_rate = self._all_vectors(limit)
             exploration.stats['sample_rate'] = sample_rate
-        exploration.stats['vocab_size'] = len(self.model.vocab)
+        exploration.stats['vocab_size'] = len(self.model.wv.vocab)
         exploration.stats['num_vectors'] = len(exploration.vectors)
         return exploration
 
@@ -157,14 +157,14 @@ class Model(object):
     def _all_vectors(self, limit):
         sample = 1
         if limit > -1:
-            sample = int(math.ceil(len(self.model.vocab) / limit))
-        sample_rate = float(limit) / len(self.model.vocab)
+            sample = int(math.ceil(len(self.model.wv.vocab) / limit))
+        sample_rate = float(limit) / len(self.model.wv.vocab)
         print('Model#_most_similar_vectors' +
               'sample={}, sample_rate={}, limit={}'.format(sample, sample_rate, limit))
         labels = []
         vectors = []
         i = 0
-        for word in self.model.vocab:
+        for word in self.model.wv.vocab:
             if (i % sample) == 0:
                 vectors.append(self.model[word])
                 labels.append(word)
